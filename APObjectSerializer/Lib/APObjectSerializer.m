@@ -201,7 +201,7 @@
     {
         NSString *mappedKey = propertyNameMappingForClass[key];
         NSString *keyWhenDeSerialized = mappedKey ? mappedKey : key;
-        Class customClass = propertyClassMappingForClass[key];
+        Class customClass = propertyClassMappingForClass[keyWhenDeSerialized];
         id deSerializedValue = [self deSerializedObjectFromValue:dict[key] customClass:customClass];
         [object setValue:deSerializedValue forKey:keyWhenDeSerialized];
     }

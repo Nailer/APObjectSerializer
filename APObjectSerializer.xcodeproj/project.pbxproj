@@ -14,6 +14,7 @@
 		EDBEA12F1B7C8BC00028169B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDBEA12E1B7C8BC00028169B /* Images.xcassets */; };
 		EDBEA1321B7C8BC00028169B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = EDBEA1301B7C8BC00028169B /* LaunchScreen.xib */; };
 		EDBEA13E1B7C8BC00028169B /* APObjectSerializerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBEA13D1B7C8BC00028169B /* APObjectSerializerTests.m */; };
+		EDBEA14A1B7C8C0C0028169B /* APObjectSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBEA1491B7C8C0C0028169B /* APObjectSerializer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		EDBEA1371B7C8BC00028169B /* APObjectSerializerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APObjectSerializerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDBEA13C1B7C8BC00028169B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EDBEA13D1B7C8BC00028169B /* APObjectSerializerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = APObjectSerializerTests.m; sourceTree = "<group>"; };
+		EDBEA1481B7C8C0C0028169B /* APObjectSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APObjectSerializer.h; sourceTree = "<group>"; };
+		EDBEA1491B7C8C0C0028169B /* APObjectSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APObjectSerializer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 		EDBEA1201B7C8BC00028169B /* APObjectSerializer */ = {
 			isa = PBXGroup;
 			children = (
+				EDBEA1471B7C8C0C0028169B /* Lib */,
 				EDBEA1251B7C8BC00028169B /* AppDelegate.h */,
 				EDBEA1261B7C8BC00028169B /* AppDelegate.m */,
 				EDBEA1281B7C8BC00028169B /* ViewController.h */,
@@ -117,6 +121,15 @@
 				EDBEA13C1B7C8BC00028169B /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EDBEA1471B7C8C0C0028169B /* Lib */ = {
+			isa = PBXGroup;
+			children = (
+				EDBEA1481B7C8C0C0028169B /* APObjectSerializer.h */,
+				EDBEA1491B7C8C0C0028169B /* APObjectSerializer.m */,
+			);
+			path = Lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -221,6 +234,7 @@
 			files = (
 				EDBEA12A1B7C8BC00028169B /* ViewController.m in Sources */,
 				EDBEA1271B7C8BC00028169B /* AppDelegate.m in Sources */,
+				EDBEA14A1B7C8C0C0028169B /* APObjectSerializer.m in Sources */,
 				EDBEA1241B7C8BC00028169B /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -416,6 +430,7 @@
 				EDBEA1431B7C8BC00028169B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EDBEA1441B7C8BC00028169B /* Build configuration list for PBXNativeTarget "APObjectSerializerTests" */ = {
 			isa = XCConfigurationList;
@@ -424,6 +439,7 @@
 				EDBEA1461B7C8BC00028169B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

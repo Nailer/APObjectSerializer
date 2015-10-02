@@ -1,39 +1,8 @@
 #import "APObjectSerializer.h"
+#import "APObjectSerializerSpec.h"
 #import <objc/runtime.h>
 
 #define kArrayItemKey @"_mangled_items_"
-
-@implementation APObjectSerializerPropertyTypeMapping
-
-- (instancetype)initWithPropertyName:(NSString *)propertyName propertyType:(Class)propertyType
-{
-    self = [super init];
-    if (self)
-    {
-        _propertyName = [propertyName copy];
-        _propertyType = [propertyType copy];
-    }
-
-    return self;
-}
-
-@end
-
-@implementation APObjectSerializerPropertyNameMapping
-
-- (instancetype)initWithStorageKey:(NSString *)storageKey propertyName:(NSString *)propertyName
-{
-    self = [super init];
-    if (self)
-    {
-        _storageKey = [storageKey copy];
-        _propertyName = [propertyName copy];
-    }
-
-    return self;
-}
-
-@end
 
 @interface APObjectSerializer()
 
@@ -43,7 +12,7 @@
 
 // Stores a cached mapping from a given name, to the name of the actual property in the class in question
 // Eg. stores that there is a mapping from "name" to "userName" or "id" to "customerId"
-@property (nonatomic, strong) NSMutableDictionary *classToPropertyNameMappingDict;
+//@property (nonatomic, strong) NSMutableDictionary *classToPropertyNameMappingDict;
 
 // Same as classToPropertyNameMappingDict, but cached for each class and all of its superclasses
 // Eg. User inherits Person, therefore this mapping will include the mappings for both User AND Person
@@ -51,7 +20,7 @@
 
 // Stores a cached mapping from a certain property, to the class of that property
 // Eg. property name "user" maps to a class with the name "User"
-@property (nonatomic, strong) NSMutableDictionary *classPropertyMappingDict;
+//@property (nonatomic, strong) NSMutableDictionary *classPropertyMappingDict;
 
 // Same as classPropertyMappingDict, but cached for each class and all of its superclasses
 // Eg. User inherits Person, therefore this mapping will include the mappings for both User AND Person
@@ -60,6 +29,8 @@
 // Stores class hierarchies for classes. Omits NSObject
 // Eg. Class hierarchy Entity>Person>User asking for the hierarchy for User will return ["Person","Entity"]
 @property (nonatomic, strong) NSMutableDictionary *classHierarchyCache;
+
+@property (nonatomic, strong) NSDictionary *classSpecMap;
 
 @end
 
@@ -70,14 +41,41 @@
     if ((self = [super init]))
     {
         self.classToPropertyNameListDict = [NSMutableDictionary new];
-        self.classToPropertyNameMappingDict = [NSMutableDictionary new];
+//        self.classToPropertyNameMappingDict = [NSMutableDictionary new];
         self.classHierarchyToPropertyNameListDict = [NSMutableDictionary new];
-        self.classPropertyMappingDict = [NSMutableDictionary new];
+//        self.classPropertyMappingDict = [NSMutableDictionary new];
         self.classHierarchyPropertyMappingDict = [NSMutableDictionary new];
         self.classHierarchyCache = [NSMutableDictionary new];
     }
 
     return self;
+}
+
+- (instancetype)initWithSpecs:(NSArray *)specs
+{
+    self = [super init];
+    if (self)
+    {
+        _specs = [specs copy];
+        self.classSpecMap = [self buildSpecMapFromSpecs:specs];
+        self.classToPropertyNameListDict = [NSMutableDictionary new];
+        self.classHierarchyToPropertyNameListDict = [NSMutableDictionary new];
+        self.classHierarchyPropertyMappingDict = [NSMutableDictionary new];
+        self.classHierarchyCache = [NSMutableDictionary new];
+    }
+
+    return self;
+}
+
+- (NSDictionary *)buildSpecMapFromSpecs:(NSArray *)specs
+{
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    for (APObjectSerializerSpec *spec in specs)
+    {
+        dict[NSStringFromClass(spec.targetClass)] = spec;
+    }
+
+    return dict;
 }
 
 #pragma mark - Public
@@ -125,45 +123,46 @@
 
     NSArray *nonNilKeys = [self findNonNilKeysForObject:object];
     NSDictionary *serializedObjectBase = [object dictionaryWithValuesForKeys:nonNilKeys];
-    NSDictionary *propertyClassMappingForClass = [self propertyClassMappingForClass:[object class]];
-    NSDictionary *propertyNameMappingForClass = [self propertyNameMappingForClass:[object class]];
+    APObjectSerializerSpec *specForClass = [self specForClass:[object class]];
+    NSDictionary *propertyClassMappingForClass = specForClass.typeMappings;
+    NSDictionary *reverseNameMappingForClass = specForClass.reverseNameMappings;
     NSMutableDictionary *serializedObject = [NSMutableDictionary new];
     for (NSString *key in serializedObjectBase)
     {
         id actualValue = serializedObjectBase[key];
-        NSString *keyWhenSerialized = [self keyWhenSerializedForKey:key usingPropertyNameMapping:propertyNameMappingForClass];
+        NSString *keyWhenSerialized = reverseNameMappingForClass[key];
         Class substituteClass = propertyClassMappingForClass[key];
-        serializedObject[keyWhenSerialized] = [self serializeValue:actualValue usingCustomClass:substituteClass];
+        serializedObject[keyWhenSerialized ? keyWhenSerialized : key] = [self serializeValue:actualValue usingCustomClass:substituteClass];
     }
 
     return serializedObject;
 }
 
-- (void)registerPropertyTypeMapping:(APObjectSerializerPropertyTypeMapping *)mapping forClass:(Class)clazz
-{
-    NSString *className = NSStringFromClass(clazz);
-    NSMutableDictionary *mappingsForClass = self.classPropertyMappingDict[className];
-    if (!mappingsForClass)
-    {
-        mappingsForClass = [NSMutableDictionary new];
-        self.classPropertyMappingDict[className] = mappingsForClass;
-    }
-
-    mappingsForClass[mapping.propertyName] = mapping.propertyType;
-}
-
-- (void)registerPropertyNameMapping:(APObjectSerializerPropertyNameMapping *)mapping forClass:(Class)clazz
-{
-    NSString *className = NSStringFromClass(clazz);
-    NSMutableDictionary *mappingsForClass = self.classToPropertyNameMappingDict[className];
-    if (!mappingsForClass)
-    {
-        mappingsForClass = [NSMutableDictionary new];
-        self.classToPropertyNameMappingDict[className] = mappingsForClass;
-    }
-
-    mappingsForClass[mapping.storageKey] = mapping.propertyName;
-}
+//- (void)registerPropertyTypeMapping:(APObjectSerializerPropertyTypeMapping *)mapping forClass:(Class)clazz
+//{
+//    NSString *className = NSStringFromClass(clazz);
+//    NSMutableDictionary *mappingsForClass = self.classPropertyMappingDict[className];
+//    if (!mappingsForClass)
+//    {
+//        mappingsForClass = [NSMutableDictionary new];
+//        self.classPropertyMappingDict[className] = mappingsForClass;
+//    }
+//
+//    mappingsForClass[mapping.propertyName] = mapping.propertyType;
+//}
+//
+//- (void)registerPropertyNameMapping:(APObjectSerializerPropertyNameMapping *)mapping forClass:(Class)clazz
+//{
+//    NSString *className = NSStringFromClass(clazz);
+//    NSMutableDictionary *mappingsForClass = self.classToPropertyNameMappingDict[className];
+//    if (!mappingsForClass)
+//    {
+//        mappingsForClass = [NSMutableDictionary new];
+//        self.classToPropertyNameMappingDict[className] = mappingsForClass;
+//    }
+//
+//    mappingsForClass[mapping.storageKey] = mapping.propertyName;
+//}
 
 #pragma mark - Helpers
 
@@ -195,8 +194,9 @@
 
 - (void)updateObject:(id)object fromDict:(NSDictionary *)dict
 {
-    NSDictionary *propertyClassMappingForClass = [self propertyClassMappingForClass:[object class]];
-    NSDictionary *propertyNameMappingForClass = [self propertyNameMappingForClass:[object class]];
+    APObjectSerializerSpec *specForClass = [self specForClass:[object class]];
+    NSDictionary *propertyClassMappingForClass = specForClass.typeMappings;
+    NSDictionary *propertyNameMappingForClass = specForClass.nameMappings;
     for (NSString *key in [dict allKeys])
     {
         NSString *mappedKey = propertyNameMappingForClass[key];
@@ -205,6 +205,11 @@
         id deSerializedValue = [self deSerializedObjectFromValue:dict[key] customClass:customClass];
         [object setValue:deSerializedValue forKey:keyWhenDeSerialized];
     }
+}
+
+- (APObjectSerializerSpec *)specForClass:(Class)pClass
+{
+    return self.classSpecMap[NSStringFromClass(pClass)];
 }
 
 - (id)deSerializedObjectFromValue:(id)value customClass:(Class)customClass
@@ -265,20 +270,6 @@
     self.classHierarchyCache[className] = classes;
 
     return classes;
-}
-
-- (NSDictionary *)propertyNameMappingForClass:(Class)objClass
-{
-    return [self mapFromClass:objClass
-               mappingForClass:self.classToPropertyNameMappingDict
-storedMappingForClassHierarchy:self.classHierarchyToPropertyNameListDict];
-}
-
-- (NSDictionary *)propertyClassMappingForClass:(Class)objClass
-{
-    return [self mapFromClass:objClass
-               mappingForClass:self.classPropertyMappingDict
-storedMappingForClassHierarchy:self.classHierarchyPropertyMappingDict];
 }
 
 - (NSDictionary *)mapFromClass:(Class)objClass
@@ -368,18 +359,6 @@ storedMappingForClassHierarchy:(NSMutableDictionary *)storedMappingForClassHiera
         [propertyNames addObject:[NSString stringWithUTF8String:name]];
     }
     free(properties);
-}
-
-- (NSString *)keyWhenSerializedForKey:(NSString *)key usingPropertyNameMapping:(NSDictionary *)propertyNameMapping
-{
-    //TODO: Optimize this when time arises by storing a reverse property name mapping! For now we haxxor a bit
-    NSSet *translatedKeys = [propertyNameMapping keysOfEntriesPassingTest:^BOOL(id k, id obj, BOOL *stop)
-    {
-        return [obj isEqualToString:key];
-    }];
-
-    NSString *translatedKey = [translatedKeys anyObject];
-    return translatedKey ? translatedKey : key;
 }
 
 @end

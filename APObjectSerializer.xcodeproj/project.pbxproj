@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A7A3CB6F20C9B1B231153EF /* APObjectSerializerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A7A33BEC5AD9153F0AEAB63 /* APObjectSerializerSpec.m */; };
 		EDBEA1241B7C8BC00028169B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBEA1231B7C8BC00028169B /* main.m */; };
 		EDBEA1271B7C8BC00028169B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBEA1261B7C8BC00028169B /* AppDelegate.m */; };
 		EDBEA12A1B7C8BC00028169B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBEA1291B7C8BC00028169B /* ViewController.m */; };
@@ -28,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3A7A33BEC5AD9153F0AEAB63 /* APObjectSerializerSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APObjectSerializerSpec.m; sourceTree = "<group>"; };
+		3A7A3BE6BD5C2B6910FA36C3 /* APObjectSerializerSpec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APObjectSerializerSpec.h; sourceTree = "<group>"; };
 		EDBEA11E1B7C8BC00028169B /* APObjectSerializer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APObjectSerializer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDBEA1221B7C8BC00028169B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EDBEA1231B7C8BC00028169B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -128,6 +131,8 @@
 			children = (
 				EDBEA1481B7C8C0C0028169B /* APObjectSerializer.h */,
 				EDBEA1491B7C8C0C0028169B /* APObjectSerializer.m */,
+				3A7A33BEC5AD9153F0AEAB63 /* APObjectSerializerSpec.m */,
+				3A7A3BE6BD5C2B6910FA36C3 /* APObjectSerializerSpec.h */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -236,6 +241,7 @@
 				EDBEA1271B7C8BC00028169B /* AppDelegate.m in Sources */,
 				EDBEA14A1B7C8C0C0028169B /* APObjectSerializer.m in Sources */,
 				EDBEA1241B7C8BC00028169B /* main.m in Sources */,
+				3A7A3CB6F20C9B1B231153EF /* APObjectSerializerSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
